@@ -26,6 +26,6 @@
   },
   "scripts": {
     "dev": "nodemon run src/app.js --watch",
-    "start": "nodemon run src/app.js"
+    "start": "node run src/app.js"
   }
 }
