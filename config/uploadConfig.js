@@ -1,5 +1,8 @@
 import {v2 as cloudinary} from 'cloudinary';
 import {CloudinaryStorage} from 'multer-storage-cloudinary';
+import {config} from 'dotenv';
+config();
+
 
 cloudinary.config({
     api_key: process.env.CLOUDINARY_API_KEY,
