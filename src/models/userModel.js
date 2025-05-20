@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import sendEmail from '../../utils/sendEmail.js';
 import * as securePin from 'secure-pin';
 import cryptoNode from 'node:crypto';
 
@@ -93,17 +92,6 @@ userSchema.methods.hashPassword = async function() {
 }
 
 
-userSchema.methods.sendConfirmationEmail = async function(otp, token_expiry, token){
-  const email = this.email;
-  const link = `${process.env.CLIENT_URL}/auth/verify?token=${token}`;
-
-  sendEmail(email,  "Security Notification", "auth_notifier", {
-    otp,
-    token_expiry: 5,
-    link,
-    name: this.fullname ?? 'User'
-  })
-}
 userSchema.methods.comparePassword = async function(password) {
   if(this.password && password) {
     return await bcrypt.compareSync(password, this.password);
