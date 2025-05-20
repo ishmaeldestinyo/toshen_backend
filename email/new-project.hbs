@@ -1,0 +1,98 @@
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{title}}</title>
+
+    <style>
+      @import
+      url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&family=Poppins:wght@200;400;600&display=swap');
+      * { font-family: 'Poppins', sans-serif; margin: 0; padding: 0; box-sizing:
+      border-box; } body { background-color: #f4f7f9; color: #333; padding:
+      2rem; line-height: 1.6; } .link { color: #229ffb; text-decoration: none;
+      font-weight: 600; } .img-holder { text-align: center; margin-bottom: 2rem;
+      } .logo-container { width: 100%; max-width: 150px; margin: 0 auto; }
+      fieldset { background-color: #fff; border-radius: 8px; border: 1px solid
+      #e3e6ea; padding: 2rem; margin: 0 auto; max-width: 600px; } legend {
+      font-size: 1.5rem; color: #105CAA; text-align: center; font-weight: 700; }
+      .description-wrapper { font-weight: 400; font-size: 1rem; color: #272b2d;
+      margin-bottom: 1.5rem; } .appreciation { margin-top: 1.5rem; font-weight:
+      600; text-align: center; font-size: 1.1rem; } .highlight { font-size:
+      0.9rem; text-align: center; margin-top: 2rem; } .icon-container { display:
+      flex; justify-content: center; gap: 1rem; margin-top: 1.8rem; }
+      .icon-container div { background: #fcfdff; border-radius: 8px; padding:
+      1rem; } footer { margin-top: 3rem; background-color: #f6f9fb; padding:
+      10px 0; text-align: center; } .address { font-size: 0.85rem; color:
+      #474b4c; } .hr { margin-top: 1rem; height: 1px; background: #ccdbdb;
+      border: none; } button { padding: 10px 12px; background: #2299fb; color:
+      white; border: none; border-radius: 8px; font-size: 1.2rem; cursor:
+      pointer; transition: background 0.3s ease; } button:hover { background:
+      #1a7fbf; /* Darker shade for hover effect */ } @media (max-width: 967px) {
+      body { padding: 1.5rem; } .img-holder { width: 90%; margin: 0 auto 1.5rem;
+      } fieldset { padding: 1.5rem; width: 90%; } legend { font-size: 1.2rem; }
+      .description-wrapper { font-size: 0.9rem; } .appreciation { font-size:
+      1rem; } .highlight { font-size: 0.8rem; } .icon-container { gap: 0.5rem; }
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <fieldset>
+      <legend>{{title}}</legend>
+      <div class="description-wrapper">
+        Hello!
+        {{fullname}}
+        👋,
+        <br /><br />
+
+        {{#if structure_file.length}}
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each structure_file}}
+                <tr>
+                  <td>{{this.name}}</td>
+                  <td>{{this.description}}</td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        {{else}}
+          <p>No features available.</p>
+        {{/if}}
+
+        <br /><br />
+      </div>
+
+      {{link}}
+
+      <h3>
+        If you encounter any issues or have any questions, feel free to reach
+        out to our
+        <a href="mailto:{{customer_care}}" class="link">customer care team</a>.
+      </h3>
+      <p class="appreciation">Thanks for choosing {{app_name}}!</p>
+      <hr class="hr" />
+      <p class="highlight">Keep in touch!</p>
+      <div class="icon-container">
+        <div><img src="cid:facebook" alt="Facebook" /></div>
+        <div><img src="cid:twitter-x" alt="Twitter" /></div>
+        <div><img src="cid:youtube" alt="YouTube" /></div>
+        <div><img src="cid:instagram" alt="Instagram" /></div>
+      </div>
+
+      <footer>
+        <p class="address">{{location}}</p>
+      </footer>
+    </fieldset>
+
+  </body>
+
+</html>
