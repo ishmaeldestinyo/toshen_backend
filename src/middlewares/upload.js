@@ -1,5 +1,5 @@
 import multer from 'multer';
-import { storage} from '../../config/uploadConfig.js';
+import { storage} from '../app.js';
 
 const uploader = multer({storage});
 

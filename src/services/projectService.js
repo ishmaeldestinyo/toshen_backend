@@ -6,8 +6,6 @@ export const createProjectService = async (req, res, next) => {
 
     const { slug, description, category_id } = req.body;
 
-    console.log('Creating project:', slug, description, category_id);
-    
     // Validate input
     if (!slug || !description || !category_id) {
         return res.status(400).json({ message: 'Name, description, and category_id are required.' });
@@ -115,6 +113,7 @@ export const createCategoryService = async (req, res, next) => {
 }
 
 export const listCategoryService = async (req, res, next) => {
+
     const { page = 1, limit = 10 } = req.query
     try {
         const categories = await Category.find()

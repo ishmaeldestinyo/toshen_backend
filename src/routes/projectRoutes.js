@@ -18,7 +18,10 @@ import authGuard from '../middlewares/authGuard.js';
 export const projectRouter = Router();
 import multer from 'multer';
 import {v2 as cloudinary} from 'cloudinary';
-import {CloudinaryStorage} from 'multer-storage-cloudinary';
+import { config } from 'dotenv';
+import {Project} from '../models/projectModel.js';
+
+config();
 
 cloudinary.config({
     api_key: process.env.CLOUDINARY_API_KEY,
@@ -26,45 +29,125 @@ cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
 })
 
-export const storage = new CloudinaryStorage({
-    cloudinary: cloudinary,
-    params: {
-        folder: 'uploads',
-        allowed_formats: ['jpg', 'png', 'jpeg'],
-    }
-})
+// Use memory storage so file is available as buffer
+const uploader = multer({ storage: multer.memoryStorage() });
 
-const uploader = multer({storage});
-
-projectRouter.post('/projects', uploader.single("image"), async (req, res, next) => {
+projectRouter.post(
+  "/",
+  uploader.single("image"),
+  async (req, res) => {
     try {
-      const slug = req.body.slug;
-      const description = req.body.description;
-      const category = req.body.category_id;
-      const file = req.file;
-  
-      console.log("slug:", slug);
-      console.log("description:", description);
-      console.log("category_id:", category);
-      console.log("file:", file);
-  
-      // Do DB logic / cloudinary upload / save here
-      return res.status(200).json({ message: "Project created successfully!" });
+      if (!req.file) {
+        return res.status(400).json({ error: "Image is required" });
+      }
+
+      // Wrap Cloudinary upload into a Promise for easier async/await usage
+      const uploadToCloudinary = () => {
+        return new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { folder: "projects" },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result);
+            }
+          );
+          stream.end(req.file.buffer);
+        });
+      };
+
+      const result = await uploadToCloudinary();
+
+      // Save project data to MongoDB
+      const { slug, description, category_id } = req.body;
+
+      if (!slug || !description || !category_id) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      const newProject = new Project({
+        slug,
+        description,
+        images: result.secure_url,  // save Cloudinary image URL
+        category: category_id,
+      });
+
+      await newProject.save();
+
+      return res.status(201).json({
+        message: "Project created successfully",
+        project: newProject,
+      });
     } catch (err) {
-      console.error("Error creating project:", err);
-      return res.status(500).json({ error: "Internal server error" });
+      console.error("Error uploading project:", err);
+      res.status(500).json({ error: err.message || "Server error" });
     }
-  });
+  }
+);
+
   
-projectRouter.get('/projects', listProjectController);
-projectRouter.get('/projects/:slug', retrieveProjectController);
-projectRouter.delete('/projects/:slug', authGuard, deleteProjectController);
-projectRouter.put('/projects/:slug', authGuard, updateProjectController);
+projectRouter.get('', listProjectController);
+projectRouter.get('/categories', listCategoryController);
+projectRouter.get('/categories/:id', retrieveCategoryController);
+projectRouter.get('/:slug', retrieveProjectController);
+projectRouter.delete('/:slug', authGuard, deleteProjectController);
+projectRouter.put(
+  "/:id",
+  uploader.single("image"),
+  async (req, res) => {
+
+    if(!id) return res.status(400).json({ error: "Project ID is required" });
+    
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: "Image is required" });
+      }
+
+      // Wrap Cloudinary upload into a Promise for easier async/await usage
+      const uploadToCloudinary = () => {
+        return new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { folder: "projects" },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result);
+            }
+          );
+          stream.end(req.file.buffer);
+        });
+      };
+
+      const result = await uploadToCloudinary();
+
+      // Save project data to MongoDB
+      const { slug, description, category_id } = req.body;
+
+      if (!slug || !description || !category_id) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      const newProject = new Project({
+        slug,
+        description,
+        images: result.secure_url,  // save Cloudinary image URL
+        category: category_id,
+      });
+
+      await newProject.save();
+
+      return res.status(201).json({
+        message: "Project created successfully",
+        project: newProject,
+      });
+    } catch (err) {
+      console.error("Error uploading project:", err);
+      res.status(500).json({ error: err.message || "Server error" });
+    }
+  }
+);
+
 
 // Category Routes
 projectRouter.post('/categories', createCategoryController);
-projectRouter.get('/categories', listCategoryController);
-projectRouter.get('/categories/:id', retrieveCategoryController);
 projectRouter.delete('/categories/:id', deleteCategoryController);
 projectRouter.put('/categories/:id', authGuard, updateCategoryController);
 

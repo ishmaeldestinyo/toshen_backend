@@ -20,7 +20,7 @@ const projectSchema = new mongoose.Schema({
         default: 'active',
     },
     images: {
-        type: [String],
+        type: String,
         required: true,
     },
 
