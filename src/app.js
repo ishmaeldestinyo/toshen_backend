@@ -14,20 +14,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(
-    cors({
-      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Explicitly list allowed methods
-      origin: [
-        "http://localhost:3000",
-        "http://localhost:5173", // Fix typo: "http:localhost:5173" -> "http://localhost:5173"
-        "https://toshen-backend.onrender.com",
-        "https://toshel-frontend.vercel.app",
-      ],
-      credentials: true, // Allow cookies if needed
-      optionsSuccessStatus: 200, // Handle preflight success
-    })
-  );
-
-app.options("*", cors()); // Enable CORS for preflight requests
+  cors({
+    methods: ["*"],
+    origin: [
+      "http://localhost:3000",
+      "http:localhost:5173",
+      "https://toshen-backend.onrender.com",
+      "https://toshel-frontend.vercel.app",
+    ],
+    optionsSuccessStatus: 200,
+  })
+);
 
 app.use(helmet());
 
