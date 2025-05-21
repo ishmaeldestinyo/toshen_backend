@@ -85,7 +85,7 @@ projectRouter.post(
 );
 
   
-projectRouter.get('', listProjectController);
+projectRouter.get('/', listProjectController);
 projectRouter.get('/categories', listCategoryController);
 projectRouter.get('/categories/:id', retrieveCategoryController);
 projectRouter.get('/:slug', retrieveProjectController);
@@ -106,7 +106,7 @@ projectRouter.put(
       const uploadToCloudinary = () => {
         return new Promise((resolve, reject) => {
           const stream = cloudinary.uploader.upload_stream(
-            { folder: "projects" },
+            { folder: "projects", access_mode: "public",  },
             (error, result) => {
               if (error) reject(error);
               else resolve(result);
