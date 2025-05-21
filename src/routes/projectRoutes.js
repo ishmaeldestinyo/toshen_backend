@@ -72,7 +72,9 @@ projectRouter.post(
       });
 
       await newProject.save();
-
+      console.log("Project created:", newProject);
+      console.log("Cloudinary result:", result);
+      console.log("Cloudinary URL:", result.secure_url);
       return res.status(201).json({
         message: "Project created successfully",
         project: newProject,
