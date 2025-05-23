@@ -91,7 +91,15 @@ projectRouter.get('/', listProjectController);
 projectRouter.get('/categories', listCategoryController);
 projectRouter.get('/categories/:id', retrieveCategoryController);
 projectRouter.get('/:slug', retrieveProjectController);
-projectRouter.delete('/:slug', authGuard, deleteProjectController);
+projectRouter.delete('/:id', authGuard, async (req, res, next) => {
+  const id = req?.params?.id;
+
+  if(!id) return res.status(400).json({success: false, message: 'id is reequired'})
+
+  const result = await Project.deleteOne({_id: id});
+
+  return res.sendStatus(410)
+});
 projectRouter.put(
   "/:id",
   uploader.single("image"),
